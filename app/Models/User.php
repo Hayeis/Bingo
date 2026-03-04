@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Models;
-// Nyoba
+// Nyoba Valen
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
