@@ -9,11 +9,11 @@ export default function GuestLayout({ children }) {
             <header className="w-full px-6 py-4">
                 <nav className="flex items-center justify-between">
                     {/* tombol back */}
-                    <Link href="/">
+                    <button onClick={()=>window.history.back()}>
                         <svg width="32" height="26" viewBox="0 0 32 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M18.6667 19.1475L10.6667 12.765L18.6667 6.38251L20.5334 7.87176L14.4 12.765L20.5334 17.6583L18.6667 19.1475Z" fill="#1D1B20"/>
                         </svg>
-                    </Link>
+                    </button>
                     {/* button humberger */}
                     <button>
                         <svg width="32" height="26" viewBox="0 0 32 26" fill="none" xmlns="http://www.w3.org/2000/svg">
