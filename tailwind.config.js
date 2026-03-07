@@ -14,6 +14,9 @@ export default {
         extend: {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                pixel: ['Silkscreen',...defaultTheme.fontFamily.sans],
+                pixel_2: ['Pixelify Sans', ...defaultTheme.fontFamily.sans],
+                formal: ['Inter',...defaultTheme.fontFamily.sans]
             },
         },
     },
