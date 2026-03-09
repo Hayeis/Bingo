@@ -21,6 +21,13 @@ export default function Login({ status, canResetPassword }) {
         });
     };
 
+    // authentication google
+    const loginWithGoogle = (e) =>{
+        e.preventDefault(); //biar halaman gk reload
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+        window.location.href = `${supabaseUrl}/auth/v1/authorize?provider=google&redirectTo=http://localhost:8000/dashboard`;
+    }
+
     return (
         <GuestLayout> 
             <Head title="Log in" />
@@ -126,8 +133,9 @@ export default function Login({ status, canResetPassword }) {
                 </div>
                {/* Login with google */}
             <div className="w-full flex justify-center mt-3 ml-2">
-                <a 
-                    href="/auth/google/redirect" 
+                <button 
+                    type="button"
+                    onClick={loginWithGoogle} 
                     className="flex items-center justify-center w-full border-2 border-black rounded-full h-[52px] relative bg-[#AAD1B4] hover:bg-[#99C2A4] transition-all"
                 >
                     {/* Ikon Google */}
@@ -144,7 +152,7 @@ export default function Login({ status, canResetPassword }) {
                     <span className="font-formal text-[14px] font-bold text-black tracking-wide">
                         Continue with Google
                     </span>
-                </a>
+                </button>
             </div>
                 {/* href to created account */}
                 <div className="flex relative item-center justify-center mt-3">
