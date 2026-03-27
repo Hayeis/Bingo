@@ -1,34 +1,69 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\TaskController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Auth\UsernameSetupController;
 
+// ----------------------
+// Root route (optional welcome page)
+// ----------------------
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Welcome');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// ----------------------
+// Guest routes (for users not logged in)
+// ----------------------
+Route::middleware('guest')->group(function () {
+    // React login/register pages
+    Route::get('/login', fn() => Inertia::render('Auth/Login'))->name('login');
+    Route::get('/register', fn() => Inertia::render('Auth/Register'))->name('register');
 
+    // Laravel auth logic for form submissions
+    Route::post('/login', [AuthenticatedSessionController::class, 'store']);
+    Route::post('/register', [RegisteredUserController::class, 'store']);
+});
+
+// ----------------------
+// Authenticated routes (must be logged in)
+// ----------------------
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    // Dashboard
+    Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->name('dashboard');
 
-    //menampilkan get
-    Route::get('/setup-username', [UsernameSetupController::class,'create'])->name('username.setup');
+    // Profile page
+    Route::get('/my-profile', fn() => Inertia::render('MyProfile'))->name('my-profile');
 
-    //menampilkan post
-    Route::post('/setup-username',[UsernameSetupController::class,'store'])->name('username.store');
+    // Update username
+    Route::post('/profile/update-username', [ProfileController::class, 'updateUsername'])
+        ->name('profile.update-username');
+
+    // Settings page
+    Route::get('/settings', fn() => Inertia::render('Settings'))->name('settings');
+
+    // Calendar page
+    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+
+    // Calendar AJAX fetch for tasks
+    Route::get('/tasks', [CalendarController::class, 'tasks'])->name('calendar.tasks');
+
+    // Task management routes
+    Route::get('/tasks/list', [TaskController::class, 'index'])->name('tasks.index');
+    Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
+    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+
+    // Custom username setup
+    Route::get('/setup-username', [ProfileController::class, 'createUsername'])->name('username.create');
+    Route::post('/setup-username', [ProfileController::class, 'storeUsername'])->name('username.store');
 });
 
-require __DIR__.'/auth.php';
+// ----------------------
+// Logout route
+// ----------------------
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
