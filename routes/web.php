@@ -46,15 +46,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', fn() => Inertia::render('Settings'))->name('settings');
 
     // Calendar page
-    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/calendar', [CalendarController::class, 'index'])
+        ->name('calendar.index');
 
-    // Calendar AJAX fetch for tasks
-    Route::get('/tasks', [CalendarController::class, 'tasks'])->name('calendar.tasks');
+    // Calendar data (AJAX)
+    Route::get('/calendar/tasks', [CalendarController::class, 'tasks'])
+        ->name('calendar.tasks');
 
-    // Task management routes
-    Route::get('/tasks/list', [TaskController::class, 'index'])->name('tasks.index');
-    Route::get('/tasks/create', [TaskController::class, 'create'])->name('tasks.create');
-    Route::post('/tasks', [TaskController::class, 'store'])->name('tasks.store');
+    // Task pages
+    Route::resource('tasks', TaskController::class)
+        ->only(['index', 'create', 'store']);
 
     // Custom username setup
     Route::get('/setup-username', [ProfileController::class, 'createUsername'])->name('username.create');
@@ -64,6 +65,4 @@ Route::middleware('auth')->group(function () {
 // ----------------------
 // Logout route
 // ----------------------
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');

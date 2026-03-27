@@ -10,9 +10,14 @@ use App\Models\Task;
 
 class CalendarController extends Controller
 {
+    public function index()
+    {
+        return Inertia::render('Calendar');
+    }
+
     public function tasks(Request $request)
     {
-        $user = Auth::user(); // get logged in user
+        $user = Auth::user();
 
         $query = Task::where('user_id', $user->id);
 
@@ -22,30 +27,9 @@ class CalendarController extends Controller
 
         if ($request->has('month')) {
             $query->whereMonth('date', substr($request->month, 5, 2))
-                ->whereYear('date', substr($request->month, 0, 4));
+                  ->whereYear('date', substr($request->month, 0, 4));
         }
 
-        $tasks = $query->get();
-
-        return response()->json($tasks);
-    }
-
-    public function index()
-    {
-        $today = Carbon::now();
-        $currentMonth = $today->month;
-        $currentYear = $today->year;
-
-        $tasks = [
-            ['date' => '2026-01-15', 'tasks' => 2, 'focus' => 4],
-            ['date' => '2026-01-23', 'tasks' => 2, 'focus' => 2],
-        ];
-
-        return Inertia::render('Calendar', [
-            'today' => $today,
-            'currentMonth' => $currentMonth,
-            'currentYear' => $currentYear,
-            'tasks' => $tasks,
-        ]);
+        return response()->json($query->get());
     }
 }

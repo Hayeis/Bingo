@@ -15,7 +15,15 @@ export default function Create() {
         reminder: '',
     });
 
-    const daysList = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const daysList = [
+        { label: 'M', value: 'mon' },
+        { label: 'T', value: 'tue' },
+        { label: 'W', value: 'wed' },
+        { label: 'T', value: 'thu' },
+        { label: 'F', value: 'fri' },
+        { label: 'S', value: 'sat' },
+        { label: 'S', value: 'sun' },
+    ];
 
     const toggleDay = (day) => {
         if (data.days.includes(day)) {
@@ -25,24 +33,30 @@ export default function Create() {
         }
     };
 
-    const submit = (e) => {
+    function submit(e) {
         e.preventDefault();
 
-        const formattedTime = `${data.hours}:${data.minutes}:${data.seconds}`;
+        const formattedTime =
+            `${data.hours.padStart(2,'0')}:` +
+            `${data.minutes.padStart(2,'0')}:` +
+            `${data.seconds.padStart(2,'0')}`;
 
-        // ✅ SET time into form data FIRST
+        // Put formatted time into form state
         setData('time', formattedTime);
 
-        post('/tasks', {
-            onSuccess: () => {
-                window.location.href = '/tasks';
+        // Remove fields backend doesn't need
+        post(route('tasks.store'), {
+            data: {
+                ...data,
+                time: formattedTime
             },
-            onError: (e) => {
-                console.log("ERROR", e);
+            preserveScroll: true,
+            onSuccess: () => {
+                router.visit(route('tasks.index'));
             }
         });
-    };
-
+    }
+    
     return (
         <div className="min-h-screen bg-green-200 relative">
             <Head title="Create Task" />
@@ -88,7 +102,7 @@ export default function Create() {
                         max="23"
                         className="w-16 text-center p-2 rounded-xl shadow"
                         value={data.hours}
-                        onChange={(e) => setData('hours', e.target.value.padStart(2, '0'))}
+                        onChange={e => setData('hours', e.target.value ? e.target.value.padStart(2,'0') : '00')}
                     />
 
                     <span>:</span>
@@ -100,7 +114,7 @@ export default function Create() {
                         max="59"
                         className="w-16 text-center p-2 rounded-xl shadow"
                         value={data.minutes}
-                        onChange={(e) => setData('minutes', e.target.value.padStart(2, '0'))}
+                        onChange={e => setData('minutes', e.target.value ? e.target.value.padStart(2,'0') : '00')}
                     />
 
                     <span>:</span>
@@ -112,7 +126,7 @@ export default function Create() {
                         max="59"
                         className="w-16 text-center p-2 rounded-xl shadow"
                         value={data.seconds}
-                        onChange={(e) => setData('seconds', e.target.value.padStart(2, '0'))}
+                        onChange={e => setData('seconds', e.target.value ? e.target.value.padStart(2,'0') : '00')}
                     />
                 </div>
 
@@ -166,26 +180,25 @@ export default function Create() {
 
                 {/* Pick Days */}
                 <div className="flex gap-2 justify-center">
-                    {daysList.map((day, index) => (
+                    {daysList.map((dayObj) => (
                         <button
                             type="button"
-                            key={index}
-                            onClick={() => toggleDay(day)}
+                            key={dayObj.value}
+                            onClick={() => toggleDay(dayObj.value)}
                             className={`w-8 h-8 rounded-full ${
-                                data.days.includes(day)
+                                data.days.includes(dayObj.value)
                                     ? 'bg-black text-white'
                                     : 'bg-gray-200'
                             }`}
                         >
-                            {day}
+                            {dayObj.label}
                         </button>
                     ))}
                 </div>
 
                 {/* Submit */}
                 <button
-                    type="button"
-                    onClick={submit}
+                    type="submit"
                     className="w-full bg-green-400 p-3 rounded-xl shadow"
                 >
                     CREATE

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from '@inertiajs/react';
 
 export default function Calendar({ tasks }) {
     const today = new Date();
@@ -22,7 +23,7 @@ export default function Calendar({ tasks }) {
         const monthStr = String(currentMonth + 1).padStart(2, '0');
         const date = `${currentYear}-${monthStr}-${String(day).padStart(2, '0')}`;
 
-        const res = await fetch(`/tasks?date=${date}`);
+        const res = await fetch(`/calendar/tasks?date=${date}`)
         const data = await res.json();
         setPanelTasks(data);
         setPanelOpen(true);
@@ -55,7 +56,7 @@ export default function Calendar({ tasks }) {
     useEffect(() => {
         const fetchMonthTasks = async () => {
             const monthStr = String(currentMonth + 1).padStart(2, '0');
-            const res = await fetch(`/tasks?month=${currentYear}-${monthStr}`);
+            const res = await fetch(`/calendar/tasks?month=${currentYear}-${monthStr}`)
             const data = await res.json();
 
             // Group tasks by day
@@ -87,24 +88,24 @@ export default function Calendar({ tasks }) {
         }}
         >
         {/* Back Button - Fixed at top-left */}
-        <button
-            onClick={() => window.location.href = '/tasks/list'}
+        <Link
+            href={route('tasks.index')}
             style={{
-            position: 'absolute',
-            top: 20,
-            left: 20,
-            padding: '8px 14px',
-            border: 'none',
-            borderRadius: 8,
-            background: '#6b3f2b',
-            color: 'white',
-            cursor: 'pointer',
-            zIndex: 1000,
-            fontWeight: 'bold'
+                position: 'absolute',
+                top: 20,
+                left: 20,
+                padding: '8px 14px',
+                borderRadius: 8,
+                background: '#6b3f2b',
+                color: 'white',
+                cursor: 'pointer',
+                zIndex: 1000,
+                fontWeight: 'bold',
+                textDecoration: 'none'
             }}
         >
             ← Back
-        </button>
+        </Link>
 
         {/* Page Title */}
         <h2 style={{ textAlign: 'center', letterSpacing: 4, marginTop: 0 }}>SELECT DATE</h2>
